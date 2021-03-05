@@ -19,17 +19,69 @@ app.use(cors());
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, './client/build')));
 
+const extendTimeoutMiddleware = (req, res, next) => {
+  const space = ' ';
+  let isFinished = false;
+  let isDataSent = false;
 
-let REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
-let workQueue = new Queue('work', REDIS_URL);
+  // Only extend the timeout for API requests
+  if (!req.url.includes('/api')) {
+    next();
+    return;
+  }
 
-app.get('/api', async (req, res) => {
-  
+  res.once('finish', () => {
+    isFinished = true;
+  });
+
+  res.once('end', () => {
+    isFinished = true;
+  });
+
+  res.once('close', () => {
+    isFinished = true;
+  });
+
+  res.on('data', (data) => {
+    // Look for something other than our blank space to indicate that real
+    // data is now being sent back to the client.
+    if (data !== space) {
+      isDataSent = true;
+    }
+  });
+
+  const waitAndSend = () => {
+    setTimeout(() => {
+      // If the response hasn't finished and hasn't sent any data back....
+      if (!isFinished && !isDataSent) {
+        // Need to write the status code/headers if they haven't been sent yet.
+        if (!res.headersSent) {
+          res.writeHead(202);
+        }
+
+        res.write(space);
+
+        // Wait another 15 seconds
+        waitAndSend();
+      }
+    }, 60000);
+  };
+
+  waitAndSend();
+  next();
+};
+
+app.use(extendTimeoutMiddleware);
+
+
+
+app.get('/api', async (req, res) => { 
   const data = await getAvailability();
-  let result = await workQueue.add();
-
-  res.json(result)
+  res.json(data)
 })
+
+
+
 
 // Handle React routing, return all requests to React app
 // app.get('*', function(req, res) {

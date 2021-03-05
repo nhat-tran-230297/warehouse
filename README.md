@@ -2,7 +2,7 @@
 
 More information about the [Assignment](https://www.reaktor.com/junior-dev-assignment/).
 
-Have a look at the [Online Demo](https://warehouse-bad-api-assignments.herokuapp.com/).
+Have a look at the [Online Demo](https://reaktor-warehouse-api.herokuapp.com/).
 
 <br>
 
