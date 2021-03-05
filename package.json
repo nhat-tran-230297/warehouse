@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "app.js"
+  "main": "app.js",
   "scripts": {
     "client-install": "cd client && npm install",
     "start": "node ./app.js",
