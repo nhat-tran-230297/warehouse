@@ -3,7 +3,6 @@ import path from 'path';
 import cors from 'cors';
 
 import getAvailability from './client/src/controllers/product.js'
-// import productsRouter from './routes/product.js'
 
 var app = express();
 const port = process.env.PORT || 5000;

@@ -10,7 +10,8 @@
     "server": "nodemon ./app.js",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "cd client && npm install && npm run build && node ../app.js"
+    "build": "cd client && npm install && npm run build",
+    
   },
   "dependencies": {
     "concurrently": "^6.0.0",
