@@ -19,23 +19,24 @@ router.get('/', async (req, res) => {
 
 app.use('/api', router)
 
-// const __dirname = path.resolve();
-// app.use(express.static(path.join(__dirname, './client/build')));
-// // Handle React routing, return all requests to React app
-// app.get('*', function(req, res) {
-//   res.sendFile(path.join(__dirname, './client/build', 'index.html'));
-// });
+
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, './build')));
+// Handle React routing, return all requests to React app
+app.get('*', function(req, res) {
+  res.sendFile(path.join(__dirname, './build', 'index.html'));
+});
 
 
 // PRODUCTIOn
-if (process.env.NODE_ENV === 'production') {
-  const __dirname = path.resolve();
-  app.use(express.static(path.join(__dirname, './client/build')));
-  // Handle React routing, return all requests to React app
-  app.get('*', function(req, res) {
-    res.sendFile(path.join(__dirname, './client/build', 'index.html'));
-  });
-}
+// if (process.env.NODE_ENV === 'production') {
+//   const __dirname = path.resolve();
+//   app.use(express.static(path.join(__dirname, './client/build')));
+//   // Handle React routing, return all requests to React app
+//   app.get('*', function(req, res) {
+//     res.sendFile(path.join(__dirname, './client/build', 'index.html'));
+//   });
+// }
 
 app.listen(port, () => {
   console.log(`Example app listening port ${port}`)
