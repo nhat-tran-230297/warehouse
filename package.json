@@ -1,0 +1,24 @@
+{
+  "name": "reaktor-warehouse",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "client-install": "cd client && npm install",
+    "start": "node ./app.js",
+    "server": "nodemon ./app.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "cd client && npm install && npm run build"
+  },
+  "dependencies": {
+    "concurrently": "^6.0.0",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
