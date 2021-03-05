@@ -9,14 +9,7 @@ const port = process.env.PORT || 5000;
 
 app.use(cors());
 
-// create a router for saving the api
-const router = express.Router();
-router.get('/', async (req, res) => {
-  const data = await getAvailability();
-  res.json(data)
-})
 
-app.use('/api', router)
 
 
 const __dirname = path.resolve();
@@ -26,6 +19,14 @@ app.get('*', function(req, res) {
   res.sendFile(path.join(__dirname, './client/build', 'index.html'));
 });
 
+// create a router for saving the api
+const router = express.Router();
+router.get('/', async (req, res) => {
+  const data = await getAvailability();
+  res.json(data)
+})
+
+app.use('/api', router)
 
 // PRODUCTIOn
 // if (process.env.NODE_ENV === 'production') {
