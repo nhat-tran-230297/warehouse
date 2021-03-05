@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import cors from 'cors';
+import timeout from 'connect-timeout'
 
 import getAvailability from './client/src/controllers/product.js'
 
@@ -25,7 +26,7 @@ const extendTimeoutMiddleware = (req, res, next) => {
   let isDataSent = false;
 
   // Only extend the timeout for API requests
-  if (!req.url.includes('/api')) {
+  if (!req.url.includes('/')) {
     next();
     return;
   }
