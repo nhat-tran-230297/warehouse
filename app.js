@@ -19,11 +19,15 @@ router.get('/', async (req, res) => {
 
 app.use('/api', router)
 
-
-app.get('/', (req, res) => {
-  res.json({id:1});
-})
-
+// production
+if (process.env.NODE_ENV === 'production') {
+  // Serve any static files
+  app.use(express.static(path.join(__dirname, 'client/build')));
+// Handle React routing, return all requests to React app
+  app.get('*', function(req, res) {
+    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+  });
+}
 
 app.listen(port, () => {
   console.log(`Example app listening port ${port}`)
