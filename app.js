@@ -6,11 +6,11 @@ import getAvailability from './client/src/controllers/product.js'
 
 var app = express();
 const port = process.env.PORT || 5000;
-const router = express.Router();
-router.get('', async (req, res) => {
-  const data = await getAvailability();
-  res.json(data)
-})
+// const router = express.Router();
+// router.get('', async (req, res) => {
+//   const data = await getAvailability();
+//   res.json(data)
+// })
 
 
 
@@ -19,17 +19,21 @@ app.use(cors());
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, './client/build')));
 
-// app.use('/api', router);
+
+function checkUserAuth(req, res, next) {
+  if (req.session.user) return next();
+  return next(new NotAuthorizedError());
+}
 
 app.get('/api', async (req, res) => {
   const data = await getAvailability();
   res.json(data)
-})
+}, checkUserAuth)
 
 // Handle React routing, return all requests to React app
-// app.get('*', function(req, res) {
-//   res.sendFile(path.join(__dirname, './client/build', 'index.html'));
-// });
+app.get('*', function(req, res) {
+  res.sendFile(path.join(__dirname, './client/build', 'index.html'));
+});
 
 // create a router for saving the api
 
