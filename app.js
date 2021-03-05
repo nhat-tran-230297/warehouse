@@ -71,16 +71,13 @@ const extendTimeoutMiddleware = (req, res, next) => {
   next();
 };
 
-app.use(extendTimeoutMiddleware);
-
-
 
 app.get('/api', async (req, res) => { 
   const data = await getAvailability();
   res.json(data)
 })
 
-
+app.use(extendTimeoutMiddleware);
 
 
 // Handle React routing, return all requests to React app
