@@ -50,3 +50,9 @@ body {
     margin-top: 5rem;
     margin-bottom: 10rem;
   }
+
+.spinner {
+  display: grid;
+  place-items: center;
+  margin-bottom: 4rem;
+}

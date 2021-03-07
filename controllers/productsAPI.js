@@ -2,8 +2,7 @@ import axios from 'axios';
 
 const baseURL = 'https://bad-api-assignment.reaktor.com/v2';
 
-
-// fetch the products (gloves, facemasks, beanies)
+// fetch the products => return array [products], i.e [glove1, glove2, ...]
 const fetchProducts = async (category) => {
     const url = `${baseURL}/products/${category}`;
 
@@ -17,7 +16,7 @@ const fetchProducts = async (category) => {
     return productsList
 }
 
-// fetching manufacturers
+// fetching manufacturers => return array [products] of a manufacturer
 const fetchManufacturers = async (manufacturer) => {
     const url = `${baseURL}/availability/${manufacturer}`;
     let res = await axios.get(url, {
@@ -38,23 +37,27 @@ const fetchManufacturers = async (manufacturer) => {
 
     data = await res.data.response;
     console.log(`Finish fetching '${manufacturer}'`);
-    return [...data];
+    return data;
 }
 
-// set the availability by filtering both the products list and manufacturers list
+// set the availability by filtering both the products list and manufacturer's items list
 const setAvailability = (productsList, manufacturersProducts) => {
     for (let product of productsList) {
         const searchProduct = manufacturersProducts
             .filter((m) => (m.manufacturer === product.manufacturer))[0]
             .products
             .filter((p) => p.id === product.id)[0];
-
-        product['availability'] = searchProduct.availability;
+        if (searchProduct){
+            product['availability'] = searchProduct.availability;
+        } else {
+            product['availability'] = 'UNDEFINED'
+        }
+        
     }   
 }
 
 // get the availability of each product and display to the UI
-const getAvailability = async () => {
+const getProductsWithAvailability = async () => {
     const glovesList = await fetchProducts('gloves');
     const facemasksList = await fetchProducts('facemasks');
     const beaniesList = await fetchProducts('beanies');
@@ -99,7 +102,24 @@ const getAvailability = async () => {
         'facemasks': facemasksList,
         'beanies': beaniesList
     }
+
+}
+
+// update cache
+const updateCache = async (cache) => {
+    const data = await getProductsWithAvailability();
+    
+    // update cache
+    cache.set('products', data);
+    console.log('cache updated')
 }
 
 
-export default getAvailability
+const test = async () => {
+    const res = await axios.get('https://bad-api-assignment.reaktor.com/v2/availability/okkau');
+    const data = await res.data.response
+
+    return data[0];
+}
+
+export { updateCache, test, getProductsWithAvailability }

@@ -1,84 +1,46 @@
 import express from 'express';
+import NodeCache from 'node-cache';
 import path from 'path';
 import cors from 'cors';
-import timeout from 'connect-timeout'
+import timeout from 'connect-timeout';
 
-import getAvailability from './client/src/controllers/product.js'
+import { updateCache, test, getProductsWithAvailability }  from './controllers/productsAPI.js'
 
-var app = express();
+const app = express();
 const port = process.env.PORT || 5000;
-// const router = express.Router();
-// router.get('', async (req, res) => {
-//   const data = await getAvailability();
-//   res.json(data)
-// })
+
+const warehouseCache = new NodeCache();
+updateCache(warehouseCache);
 
 
-
+// const __dirname = path.resolve();
+// app.use(express.static(path.join(__dirname, './client/build')));
 app.use(cors());
 
-const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, './client/build')));
-
-const extendTimeoutMiddleware = (req, res, next) => {
-  const space = ' ';
-  let isFinished = false;
-  let isDataSent = false;
-
-  // Only extend the timeout for API requests
-  if (!req.url.includes('/')) {
-    next();
-    return;
-  }
-
-  res.once('finish', () => {
-    isFinished = true;
-  });
-
-  res.once('end', () => {
-    isFinished = true;
-  });
-
-  res.once('close', () => {
-    isFinished = true;
-  });
-
-  res.on('data', (data) => {
-    // Look for something other than our blank space to indicate that real
-    // data is now being sent back to the client.
-    if (data !== space) {
-      isDataSent = true;
-    }
-  });
-
-  const waitAndSend = () => {
-    setTimeout(() => {
-      // If the response hasn't finished and hasn't sent any data back....
-      if (!isFinished && !isDataSent) {
-        // Need to write the status code/headers if they haven't been sent yet.
-        if (!res.headersSent) {
-          res.writeHead(202);
-        }
-
-        res.write(space);
-
-        // Wait another 15 seconds
-        waitAndSend();
-      }
-    }, 60000);
-  };
-
-  waitAndSend();
-  next();
-};
-
-
 app.get('/api', async (req, res) => { 
-  const data = await getAvailability();
-  res.json(data)
+  const data = await warehouseCache.get('products');
+
+  // const data = await getProductsWithAvailability();
+  
+  if (data) {
+    res.json(data)
+  }
 })
 
-app.use(extendTimeoutMiddleware);
+
+function errorHandler (err, req, res, next) {
+  console.log(err.message);
+  if(error.message === 'cache empty') {
+    return response.status(404).send({ error: 'cache data not ready yet' })
+  }
+
+  next(error)
+}
+
+app.use(function (err, req, res, next) {
+  console.error(err.stack)
+  res.status(503).send('Something broke!')
+})
 
 
 // Handle React routing, return all requests to React app
@@ -91,15 +53,15 @@ app.use(extendTimeoutMiddleware);
 
 
 
-// PRODUCTIOn
-// if (process.env.NODE_ENV === 'production') {
-//   const __dirname = path.resolve();
-//   app.use(express.static(path.join(__dirname, './client/build')));
-//   // Handle React routing, return all requests to React app
-//   app.get('*', function(req, res) {
-//     res.sendFile(path.join(__dirname, './client/build', 'index.html'));
-//   });
-// }
+// PRODUCTION
+if (process.env.NODE_ENV === 'production') {
+  const __dirname = path.resolve();
+  app.use(express.static(path.join(__dirname, './client/build')));
+  // Handle React routing, return all requests to React app
+  app.get('*', function(req, res) {
+    res.sendFile(path.join(__dirname, './client/build', 'index.html'));
+  });
+}
 
 
 app.listen(port, () => {
