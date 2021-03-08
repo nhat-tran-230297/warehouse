@@ -28,15 +28,12 @@ The assignment is about building a single and simple UI web app for the client, 
 
 The APIs are running at https://bad-api-assignment.reaktor.com/.
 
-<br>
-
-I am currently adding more testing function and building a backend server to utilize efficient cashing, they will be pushed to gitHub soon.
-
-<br>
 
 # Installation
 
-This implementation was decorated with [React](https://reactjs.org/). You can either visualize via the [Online Demo](https://warehouse-bad-api-assignments.herokuapp.com/) or run locally by following these steps.
+This implementation UI was decorated with [React](https://reactjs.org/) at the frontend. You can either visualize via the [Online Demo](https://warehouse-bad-api-assignments.herokuapp.com/) or run locally by following these steps.
+
+More information about [React documentation](https://reactjs.org/docs/getting-started.html).
 
 1. Download and Install [NodeJS](https://nodejs.org/en/) (skip this step if you already have NodeJS)
 
@@ -49,10 +46,10 @@ cd warehouse
 3. Run the application 
 
 ```
-npm start
+npm run dev
 ```
 
-More information about [React documentation](https://reactjs.org/docs/getting-started.html).
+
 
 <br>
 
