@@ -106,12 +106,32 @@ const getProductsWithAvailability = async () => {
 }
 
 // update cache
-const updateCache = async (cache) => {
-    const data = await getProductsWithAvailability();
-    
+const updateCache = async (cache, update=false) => {
     // update cache
+    if (update) {
+        const data = await getProductsWithAvailability();
+        cache.set('products', data);
+        return;
+    
+    // get cache
+    } else {
+        const data = cache.get('products');
+        if (data){
+            return data
+        } else {
+            const data = await getProductsWithAvailability();
+            cache.set('products', data);
+            return data;
+        }
+    }
+
+    
+    
+    
     cache.set('products', data);
-    console.log('cache updated')
+
+
+    return cache.get('products')
 }
 
 
@@ -122,4 +142,4 @@ const test = async () => {
     return data[0];
 }
 
-export { updateCache, test, getProductsWithAvailability }
+export { updateCache, getProductsWithAvailability }
